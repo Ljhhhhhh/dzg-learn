@@ -67,6 +67,7 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
 
   useEffect(() => {
     console.log(CompRef.current, 'compref');
+    // 如果是dzgSelect的时候 拿到他的updateOptions 啸子哥
     // if (CompRef.current && CompRef.current.updateOptions) {
     //   console.log(CompRef.current, 'compref');
     // }

@@ -25,6 +25,7 @@ const DzgSelect = React.forwardRef((props: any, ref: React.Ref<React.ReactDOM>) 
     restProps.options = optionsData;
   }
 
+  // 定义了更新options的方法，希望被父组件使用 啸子哥
   const updateOptions = (opts: any) => {
     console.log('updateOptions get it!');
     setOptions(opts);
