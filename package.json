@@ -1,0 +1,64 @@
+{
+  "private": true,
+  "name": "dzg-learn",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "cross-env PORT=5656 umi dev",
+    "start": "cross-env PORT=5656 umi dev",
+    "javaer-dev": "cross-env PORT=5656 HMR=none umi dev",
+    "build": "cross-env NODE_ENV=production BABELRC=on APP_ROOT=./ umi build",
+    "build-sourcemap": "cross-env NODE_ENV=production BABELRC=on APP_ROOT=./ umi build --sourcemap",
+    "build-bundlesize": "cross-env NODE_ENV=production ANALYZE=1 APP_ROOT=./ umi build",
+    "test": "umi test",
+    "lint": "eslint {src,mock,tests}/**/*.{ts,tsx} --fix",
+  },
+  "prettier": "@dzg/prettier-config",
+  "dependencies": {
+    "@ant-design/icons": "^4.0.0",
+    "@dzg/ad-search": "^1.0.20",
+    "@dzg/base-component": "^1.0.11",
+    "@dzg/common-utils": "^1.2.10",
+    "@dzg/gm-template": "^1.1.40",
+    "antd": "^4.0.1",
+    "axios": "^0.19.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "devDependencies": {
+    "@dzg/prettier-config": "^1.0.3",
+    "@types/jest": "^23.3.12",
+    "@types/react": "^16.7.18",
+    "@types/react-dom": "^16.0.11",
+    "@types/react-test-renderer": "^16.0.3",
+    "@umijs/preset-react": "^1",
+    "babel-eslint": "^9.0.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^5.4.0",
+    "eslint-config-umi": "^1.4.0",
+    "eslint-plugin-flowtype": "^2.50.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.11.1",
+    "esm": "^3.2.25",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.2",
+    "react-test-renderer": "^16.7.0",
+    "umi": "^3.1"
+  },
+  "resolutions": {
+    "@typescript-eslint/eslint-plugin": "^2.23.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "engines": {
+    "node": ">=10.13"
+  }
+}
