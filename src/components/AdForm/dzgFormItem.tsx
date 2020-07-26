@@ -65,13 +65,17 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
     !flag && setPropsData({ ...propsNew });
   };
 
-  useEffect(() => {
-    console.log(CompRef.current, 'compref');
-    // 如果是dzgSelect的时候 拿到他的updateOptions 啸子哥
-    // if (CompRef.current && CompRef.current.updateOptions) {
-    //   console.log(CompRef.current, 'compref');
-    // }
-  }, [CompRef]);
+  // useEffect(() => {
+  //   console.log(CompRef.current, 'compref');
+  //   // 如果是dzgSelect的时候 拿到他的updateOptions 啸子哥
+  //   // if (CompRef.current && CompRef.current.updateOptions) {
+  //   //   console.log(CompRef.current, 'compref');
+  //   // }
+  //   if (CompRef.current && CompRef.current.updateOptions) {
+
+  //   }
+  //   // TODO:: 收集ref的更新选项方法 类似收集update
+  // }, [CompRef]);
 
   useEffect(() => {
     const { name } = formItemProps;
@@ -83,6 +87,8 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
       });
     }
     if (context.appendToLinkage) {
+      const { updateOptions } = CompRef.current as any;
+      console.log(updateOptions, 'updateOptions in formItem');
       context.appendToLinkage({
         itemObj: {
           ...context.linkageStore,
@@ -94,6 +100,7 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
         name,
         linkageFn: linkageFn ? linkageFn : null,
         update: updateWithProps,
+        updateOptions,
       });
     }
   }, [context]);
@@ -113,8 +120,9 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
   const searchProto = ['Select', 'TreeSelect'];
   if (onSearch && searchProto.includes(tag)) {
     restProps.onSearch = (e: any) => {
-      const update = context.linkageStore[formItemProps.name].update;
-      onSearch(e, update, form);
+      const updateOptions = context.linkageStore[formItemProps.name].updateOptions;
+      console.log(updateOptions, 'updateOptions');
+      onSearch(e, updateOptions, form);
     };
   }
 

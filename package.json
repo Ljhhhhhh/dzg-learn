@@ -11,6 +11,7 @@
     "build-bundlesize": "cross-env NODE_ENV=production ANALYZE=1 APP_ROOT=./ umi build",
     "test": "umi test",
     "lint": "eslint {src,mock,tests}/**/*.{ts,tsx} --fix",
+    "precommit": "lint-staged"
   },
   "prettier": "@dzg/prettier-config",
   "dependencies": {

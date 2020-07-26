@@ -85,11 +85,12 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
       };
     },
     appendToLinkage: (item: any) => {
-      const { name, linkageFn, itemObj, update } = item;
+      const { name, linkageFn, itemObj, update, updateOptions } = item;
       linkageStore[name] = {
         itemObj,
         linkageFn: linkageFn || null,
         update,
+        updateOptions,
       };
     },
   };
