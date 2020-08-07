@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Select } from 'antd';
+import { Button, Select, Form, Input } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { FormChangeInfo } from 'rc-field-form/es/FormContext';
 import { Store } from 'antd/es/form/interface';
@@ -9,6 +9,8 @@ import AdForm from '../../components/AdForm';
 import { ItemProps } from '../../components/AdForm/interface';
 import { formConfig } from './formConfig';
 import './_style.less';
+
+const FormItem = Form.Item;
 
 interface IMockData {
   key: string;
@@ -28,7 +30,7 @@ for (let i = 0; i < 20; i++) {
 }
 
 const formValue = {
-  input1: '大掌柜',
+  // input1: '大掌柜',
 };
 
 const selectAfter = (
@@ -39,6 +41,20 @@ const selectAfter = (
     <Select.Option value=".org">.org</Select.Option>
   </Select>
 );
+
+const config2: ItemProps = {
+  input1: {
+    formItemProps: {
+      label: '输入框1',
+      rules: [{ required: true }],
+      initialValue: '卢洁辉',
+    },
+    tag: 'Input',
+    layout: {
+      span: 8,
+    },
+  },
+};
 
 const JsonForm: React.FC = () => {
   const [itemObj, setItemObj] = useState<ItemProps>(formConfig);
@@ -55,8 +71,8 @@ const JsonForm: React.FC = () => {
   };
 
   // form表单change事件
-  const handleFormChange = (name: string, info: FormChangeInfo, value: any) => {
-    console.log(value, 'value');
+  const handleFormChange = (changedValue: Store, allValues: Store) => {
+    console.log(changedValue, 'value', allValues);
   };
 
   const handleSubmit = (values: Store) => {
@@ -83,15 +99,44 @@ const JsonForm: React.FC = () => {
 
   return (
     <div className="ad-form_demo">
-      <AdForm
-        onFormChangeLazy={handleFormChange}
-        size="small"
-        initialValue={formValue}
-        validateMessages={validateMessages}
-        onSubmit={handleSubmit}
-        itemObj={itemObj}
-        renderMoreBtn={renderMoreBtn}
-      />
+      <div>
+        <Form.Provider>
+          <div>
+            <AdForm
+              name="myForm"
+              onFormChangeLazy={handleFormChange}
+              size="small"
+              initialValue={formValue}
+              validateMessages={validateMessages}
+              onSubmit={handleSubmit}
+              jsonItems={itemObj}
+              // renderMoreBtn={renderMoreBtn}
+              // needBtn={false}
+            >
+              <FormItem label="children" name="hello">
+                <Input placeholder="this is children input"></Input>
+              </FormItem>
+            </AdForm>
+          </div>
+          {/* <div>
+            <AdForm
+              name="myForm"
+              onFormChangeLazy={handleFormChange}
+              size="small"
+              initialValue={formValue}
+              validateMessages={validateMessages}
+              onSubmit={handleSubmit}
+              jsonItems={config2}
+              renderMoreBtn={renderMoreBtn}
+              // needBtn={false}
+            />
+          </div> */}
+        </Form.Provider>
+      </div>
+
+      {/* <div>
+        <AdForm onFormChangeLazy={handleFormChange} onSubmit={handleSubmit} itemObj={config2} />
+      </div> */}
     </div>
   );
 };

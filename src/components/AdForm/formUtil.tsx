@@ -1,4 +1,4 @@
-import { Input, InputNumber, Select, Radio, Checkbox, Cascader, DatePicker, TimePicker } from 'antd';
+import { Input, InputNumber, Radio, Checkbox, Cascader, DatePicker, TimePicker } from 'antd';
 import { ITag } from './interface';
 import DzgCheckbox from './dzgCheckbox';
 import DzgSwitch from './dzgSwitch';

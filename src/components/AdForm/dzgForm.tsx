@@ -1,7 +1,7 @@
 import React, { useEffect, createContext, useState } from 'react';
 import { Form, Button, Row } from 'antd';
+import { Store } from 'antd/es/form/interface';
 import { FormInstance } from 'antd/es/form';
-import { FormChangeInfo } from 'rc-field-form/es/FormContext';
 import { message } from '@dzg/common-utils';
 import RenderFormItem from './dzgFormItem';
 import useDebounceFn from '../../hooks/useDebounceFn';
@@ -9,7 +9,7 @@ import { IDzgFormProps, IFormContext } from './interface';
 import './style.less';
 
 export const FormContext = createContext<IFormContext>({
-  itemObj: {},
+  jsonItems: {},
   dropStore: {},
   linkageStore: {},
 });
@@ -23,7 +23,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const {
-    itemObj,
+    jsonItems,
     delayMs,
     needReset,
     afterReset,
@@ -36,6 +36,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
     name,
     onSubmit,
     children,
+    needBtn,
     ...formProps
   } = props;
 
@@ -43,7 +44,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
 
   useEffect(() => {
     checkFiled();
-  }, [itemObj]);
+  }, [jsonItems]);
 
   useEffect(() => {
     if (initialValue) {
@@ -74,7 +75,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   const dropStore: any = {};
   const linkageStore: any = {};
   const dropContext: IFormContext = {
-    itemObj,
+    jsonItems,
     dropStore,
     linkageStore,
     appendToDrop: (item: any) => {
@@ -85,9 +86,9 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
       };
     },
     appendToLinkage: (item: any) => {
-      const { name, linkageFn, itemObj, update, updateOptions } = item;
+      const { name, linkageFn, jsonItems, update, updateOptions } = item;
       linkageStore[name] = {
-        itemObj,
+        jsonItems,
         linkageFn: linkageFn || null,
         update,
         updateOptions,
@@ -97,7 +98,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
 
   const checkFiled = () => {
     // 设置需要被移除的字段
-    Object.keys(dropStore).map((key: string) => {
+    Object.keys(dropStore).forEach((key: string) => {
       const { isDropFn, setDrop } = dropStore[key];
       const flag = isDropFn(form);
       setDrop(flag);
@@ -106,9 +107,9 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
     const linkageFns = Object.values(linkageStore).filter((item: any) => item.linkageFn);
     if (linkageFns.length) {
       // 把当前项的值也传出去
-      linkageFns.map((item: any) => {
-        const { itemObj, linkageFn } = item;
-        linkageFn(form, itemObj);
+      linkageFns.forEach((item: any) => {
+        const { jsonItems, linkageFn } = item;
+        linkageFn(form, jsonItems);
       });
     }
   };
@@ -119,12 +120,11 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
 
   // 表单修改
   let flag: any;
-  const handleFormChange = (name: string, info: FormChangeInfo) => {
-    const values = info.forms[name].getFieldsValue();
-    onFormChange && onFormChange(name, info, values);
+  const handleFormChange = (changedValues: Store, allValues: Store) => {
+    onFormChange && onFormChange(changedValues, allValues);
     if (onFormChangeLazy) {
       if (!flag) {
-        onFormChangeLazy(name, info, values);
+        onFormChangeLazy(changedValues, allValues);
         flag = true;
         let timer = setTimeout(() => {
           flag = false;
@@ -137,6 +137,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
 
   // 按钮区域
   const formBtnWrap = (form: FormInstance) => {
+    if (!needBtn) return null;
     return (
       <>
         {needReset ? (
@@ -153,22 +154,22 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   };
   // createContext 存储子项实例
   return (
-    <Form.Provider onFormChange={handleFormChange}>
-      <FormContext.Provider value={dropContext}>
-        <Form form={form} {...formProps} name={name || '__Form__' + _fid}>
-          {children}
-          <Row>
-            {Object.keys(itemObj).map(formItemName => {
-              itemObj[formItemName].formItemProps.name = formItemName;
-              const key =
-                formItemName + Date.now().toString() + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
-              return <RenderFormItem key={key} form={form} formItem={itemObj[formItemName]} formProps={formProps} />;
-            })}
-          </Row>
-          <div className="dzg-adform_btnwrap">{formBtnWrap(form)}</div>
-        </Form>
-      </FormContext.Provider>
-    </Form.Provider>
+    // <Form.Provider onFormChange={handleFormChange}>
+    <FormContext.Provider value={dropContext}>
+      <Form form={form} {...formProps} name={name || '__Form__' + _fid} onValuesChange={handleFormChange}>
+        {children}
+        <Row>
+          {Object.keys(jsonItems).map(formItemName => {
+            jsonItems[formItemName].formItemProps.name = formItemName;
+            const key =
+              formItemName + Date.now().toString() + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
+            return <RenderFormItem key={key} form={form} formItem={jsonItems[formItemName]} formProps={formProps} />;
+          })}
+        </Row>
+        <div className="dzg-adform_btnwrap">{formBtnWrap(form)}</div>
+      </Form>
+    </FormContext.Provider>
+    // </Form.Provider>
   );
 };
 
@@ -178,9 +179,7 @@ DzgForm.defaultProps = {
   needReset: true,
   disabled: false,
   delayMs: 500,
+  needBtn: true,
 };
 
 export default DzgForm;
-
-// TODO:: formItem 排序
-// TODO:: 自定义组件的 ref ts类型怎么写，目前是any

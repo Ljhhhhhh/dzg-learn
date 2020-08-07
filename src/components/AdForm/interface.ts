@@ -74,7 +74,8 @@ export interface ItemProps {
 }
 
 export interface IDzgFormProps extends Omit<FormProps, 'onFormFinish'> {
-  itemObj: ItemProps;
+  // itemObj: ItemProps;
+  jsonItems: ItemProps;
   submitText?: string;
   resetText?: string;
   delayMs?: number;
@@ -85,12 +86,13 @@ export interface IDzgFormProps extends Omit<FormProps, 'onFormFinish'> {
   onSubmit?: (data: any) => void;
   renderMoreBtn?: (form: FormInstance) => React.ReactNode;
   initialValue?: Store;
-  onFormChange?: ((name: string, info: FormChangeInfo, value: any) => void) | undefined;
-  onFormChangeLazy?: ((name: string, info: FormChangeInfo, value: any) => void) | undefined;
+  needBtn?: boolean;
+  onFormChange?: ((changedValues: Store, allValues: Store) => void) | undefined;
+  onFormChangeLazy?: ((changedValues: Store, allValues: Store) => void) | undefined;
 }
 
 export interface IFormContext {
-  itemObj: ItemProps;
+  jsonItems: ItemProps;
   dropStore: any;
   linkageStore: any;
   // dropStore: {

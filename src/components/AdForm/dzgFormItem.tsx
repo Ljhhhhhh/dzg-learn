@@ -6,10 +6,16 @@ import { FormContext } from './dzgForm';
 import _ from 'lodash';
 
 const FormItem = Form.Item;
+const updateInCompKeys = ['options', 'treeData'];
 
 const removeFunInObj = (obj: any) => {
   const objFilter = { ...obj };
-  Object.keys(objFilter).map((key: any) => {
+  updateInCompKeys.forEach(key => {
+    if (objFilter[key]) {
+      delete objFilter[key];
+    }
+  });
+  Object.keys(objFilter).forEach((key: any) => {
     if (Object.prototype.toString.call(objFilter[key]) === '[object Function]') {
       delete objFilter[key];
     }
@@ -21,6 +27,7 @@ const removeFunInObj = (obj: any) => {
     // 如果isDrop未定义 设置初始值
     objFilter.isDrop = false;
   }
+
   return objFilter;
 };
 
@@ -37,45 +44,40 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
     linkageFn,
     children,
     update,
-    itemObj,
+    jsonItems,
     onSearch,
     layout,
     ...restProps
   } = formItem;
   const [drop, setDrop] = useState(false);
   const context = useContext(FormContext);
-  const CompRef = useRef(null);
+  const CompRef = useRef<{ updateOptions: (options: any[]) => void }>(null);
 
   const itemLayout = layout || { span: 24 };
 
   const updateWithProps = (newProps: any) => {
+    const { options, treeData, ...restProps } = newProps;
     const propsNew = {
       formItem: {
         ...formItem,
-        ...newProps,
+        ...restProps,
       },
       form,
       formProps,
     };
 
-    // 不比较函数
+    // 不比较函数 removeFunInObj
     const newPropsToCompare = removeFunInObj(propsNew.formItem);
     const oldPropsToCompare = removeFunInObj(propsData.formItem);
     const flag = _.isEqual(newPropsToCompare, oldPropsToCompare);
     !flag && setPropsData({ ...propsNew });
+    if ((options || treeData) && CompRef.current) {
+      let newOpt = options || treeData;
+      // 如果是updateInCompKeys中定义的属性，则忽略此属性比对，走updateOptions方法
+      const { updateOptions } = CompRef.current;
+      updateOptions(newOpt);
+    }
   };
-
-  // useEffect(() => {
-  //   console.log(CompRef.current, 'compref');
-  //   // 如果是dzgSelect的时候 拿到他的updateOptions 啸子哥
-  //   // if (CompRef.current && CompRef.current.updateOptions) {
-  //   //   console.log(CompRef.current, 'compref');
-  //   // }
-  //   if (CompRef.current && CompRef.current.updateOptions) {
-
-  //   }
-  //   // TODO:: 收集ref的更新选项方法 类似收集update
-  // }, [CompRef]);
 
   useEffect(() => {
     const { name } = formItemProps;
@@ -87,20 +89,17 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
       });
     }
     if (context.appendToLinkage) {
-      const { updateOptions } = CompRef.current as any;
-      console.log(updateOptions, 'updateOptions in formItem');
       context.appendToLinkage({
-        itemObj: {
+        jsonItems: {
           ...context.linkageStore,
           [name]: {
-            ...context.itemObj[name],
+            ...context.jsonItems[name],
             update: updateWithProps,
           },
         },
         name,
         linkageFn: linkageFn ? linkageFn : null,
         update: updateWithProps,
-        updateOptions,
       });
     }
   }, [context]);
@@ -118,12 +117,17 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
   }
 
   const searchProto = ['Select', 'TreeSelect'];
-  if (onSearch && searchProto.includes(tag)) {
-    restProps.onSearch = (e: any) => {
-      const updateOptions = context.linkageStore[formItemProps.name].updateOptions;
-      console.log(updateOptions, 'updateOptions');
-      onSearch(e, updateOptions, form);
-    };
+  if (onSearch) {
+    if (searchProto.includes(tag)) {
+      restProps.onSearch = (e: any) => {
+        const update = context.linkageStore[formItemProps.name].update;
+        onSearch(e, update, form);
+      };
+    } else {
+      restProps.onSearch = (e: string) => {
+        onSearch(e);
+      };
+    }
   }
 
   return (
