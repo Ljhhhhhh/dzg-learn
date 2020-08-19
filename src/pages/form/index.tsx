@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Select, Form, Input } from 'antd';
 import { FormInstance } from 'antd/es/form';
-import { FormChangeInfo } from 'rc-field-form/es/FormContext';
 import { Store } from 'antd/es/form/interface';
-// import axios from 'axios';
-import todos from './todos';
 import AdForm from '../../components/AdForm';
 import { ItemProps } from '../../components/AdForm/interface';
 import { formConfig } from './formConfig';

@@ -55,6 +55,7 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
 
   const itemLayout = layout || { span: 24 };
 
+  // TODO:: 布局单位 100px 5em
   const updateWithProps = (newProps: any) => {
     const { options, treeData, ...restProps } = newProps;
     const propsNew = {
@@ -72,6 +73,7 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
     const flag = _.isEqual(newPropsToCompare, oldPropsToCompare);
     !flag && setPropsData({ ...propsNew });
     if ((options || treeData) && CompRef.current) {
+      // checkbox
       let newOpt = options || treeData;
       // 如果是updateInCompKeys中定义的属性，则忽略此属性比对，走updateOptions方法
       const { updateOptions } = CompRef.current;

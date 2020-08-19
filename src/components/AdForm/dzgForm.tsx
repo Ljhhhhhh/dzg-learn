@@ -1,10 +1,11 @@
-import React, { useEffect, createContext, useState } from 'react';
+import React, { useEffect, createContext, useState, useRef } from 'react';
 import { Form, Button, Row } from 'antd';
 import { Store } from 'antd/es/form/interface';
 import { FormInstance } from 'antd/es/form';
 import { message } from '@dzg/common-utils';
 import RenderFormItem from './dzgFormItem';
 import useDebounceFn from '../../hooks/useDebounceFn';
+import DzgButton from './dzgButton';
 import { IDzgFormProps, IFormContext } from './interface';
 import './style.less';
 
@@ -20,8 +21,9 @@ const LAZY_TIME = 500;
 
 const DzgForm: React.FC<IDzgFormProps> = props => {
   const _fid = ++_Fid;
-  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const submitBtnRef = useRef();
+
   const {
     jsonItems,
     delayMs,
@@ -61,14 +63,15 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
 
   // 提交表单
   const handleSubmit = async () => {
-    setLoading(true);
+    const btnRef: any = submitBtnRef.current || {};
+    btnRef.setLoading(true);
     try {
-      const value: any = await form.validateFields();
+      const value: Store = await form.validateFields();
       onSubmit && onSubmit(value);
     } catch (error) {
       message.error('请先修正表单内容');
     } finally {
-      setLoading(false);
+      btnRef.setLoading(false);
     }
   };
 
@@ -108,8 +111,8 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
     if (linkageFns.length) {
       // 把当前项的值也传出去
       linkageFns.forEach((item: any) => {
-        const { jsonItems, linkageFn } = item;
-        linkageFn(form, jsonItems);
+        const { linkageFn } = item;
+        linkageFn(form, linkageStore);
       });
     }
   };
@@ -145,16 +148,15 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
             {resetText}
           </Button>
         ) : null}
-        <Button disabled={formProps.disabled} loading={loading} onClick={handleSubmit} type="primary">
+        <DzgButton disabled={formProps.disabled} ref={submitBtnRef} onClick={handleSubmit} type="primary">
           {submitText}
-        </Button>
+        </DzgButton>
         {renderMoreBtn && renderMoreBtn(form)}
       </>
     );
   };
   // createContext 存储子项实例
   return (
-    // <Form.Provider onFormChange={handleFormChange}>
     <FormContext.Provider value={dropContext}>
       <Form form={form} {...formProps} name={name || '__Form__' + _fid} onValuesChange={handleFormChange}>
         {children}
@@ -169,7 +171,6 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
         <div className="dzg-adform_btnwrap">{formBtnWrap(form)}</div>
       </Form>
     </FormContext.Provider>
-    // </Form.Provider>
   );
 };
 

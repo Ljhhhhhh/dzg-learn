@@ -1,9 +1,11 @@
-import { Input, InputNumber, Radio, Checkbox, Cascader, DatePicker, TimePicker } from 'antd';
+import { Input, InputNumber, Radio, Cascader, DatePicker, TimePicker } from 'antd';
 import { ITag } from './interface';
 import DzgCheckbox from './dzgCheckbox';
 import DzgSwitch from './dzgSwitch';
 import DzgTreeSelect from './dzgTreeSelect';
 import DzgSelect from './dzgSelect';
+import DzgRadioGroup from './dzgRadioGroup';
+import DzgCheckboxGroup from './dzgCheckboxGroup';
 
 const getFormItemTag = (itemTag: ITag) => {
   let comp;
@@ -29,14 +31,14 @@ const getFormItemTag = (itemTag: ITag) => {
     case 'Radio':
       comp = Radio;
       break;
-    case 'RadioGroup':
-      comp = Radio.Group;
+    case 'Radio.Group':
+      comp = DzgRadioGroup;
       break;
     case 'Checkbox':
       comp = DzgCheckbox;
       break;
-    case 'CheckboxGroup':
-      comp = Checkbox.Group;
+    case 'Checkbox.Group':
+      comp = DzgCheckboxGroup;
       break;
     case 'Switch':
       comp = DzgSwitch;
@@ -47,18 +49,31 @@ const getFormItemTag = (itemTag: ITag) => {
     case 'TimePicker':
       comp = TimePicker;
       break;
+    case 'TimePicker.RangePicker':
+      comp = TimePicker.RangePicker;
+      break;
     case 'DatePicker':
       comp = DatePicker;
+      break;
+    case 'DatePicker.RangePicker':
+      comp = DatePicker.RangePicker;
       break;
     case 'TreeSelect':
       comp = DzgTreeSelect;
       break;
-    // case 'Upload':
-    //   comp = DzgUpload;
-    //   break;
+
     case 'form-item-render':
       comp = null;
       break;
+    // case 'Upload':
+    //   comp = DzgUpload;
+    //   break;
+    // case 'AutoComplete':
+    //   comp = AutoComplete;
+    //   break;
+    // case 'Transfer':
+    //   comp = Transfer;
+    //   break;
     default:
       console.error(`未注册${itemTag}组件，未注册${itemTag}的render函数`);
       comp = null;

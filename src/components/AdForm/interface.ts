@@ -19,9 +19,11 @@ export type ITag =
   | 'Switch'
   | 'Cascader'
   | 'DatePicker'
-  | 'CheckBox'
+  | 'DatePicker.RangePicker'
+  | 'Checkbox'
   | 'CheckboxGroup'
   | 'TimePicker'
+  | 'TimePicker.RangePicker'
   | 'TreeSelect'
   // | 'Upload' // TODO::
   | any;
