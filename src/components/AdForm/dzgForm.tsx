@@ -9,6 +9,12 @@ import DzgButton from './dzgButton';
 import { IDzgFormProps, IFormContext } from './interface';
 import './style.less';
 
+// TODO 联动项的依赖关系
+// TODO 表单项label的绝对宽度、样式
+// TODO 只渲染，form值不需要的情况
+// TODO 表单排序
+// TODO 移除字段后保留值
+
 export const FormContext = createContext<IFormContext>({
   jsonItems: {},
   dropStore: {},
@@ -45,13 +51,13 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   const _DelayMs = delayMs || LAZY_TIME;
 
   useEffect(() => {
-    checkFiled();
+    checkFields();
   }, [jsonItems]);
 
   useEffect(() => {
     if (initialValue) {
       form.setFieldsValue(initialValue);
-      checkFiled();
+      checkFields();
     }
   }, []);
 
@@ -99,7 +105,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
     },
   };
 
-  const checkFiled = () => {
+  const checkFields = () => {
     // 设置需要被移除的字段
     Object.keys(dropStore).forEach((key: string) => {
       const { isDropFn, setDrop } = dropStore[key];
@@ -118,7 +124,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   };
 
   const { run } = useDebounceFn(() => {
-    checkFiled();
+    checkFields();
   }, _DelayMs);
 
   // 表单修改
@@ -158,7 +164,13 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   // createContext 存储子项实例
   return (
     <FormContext.Provider value={dropContext}>
-      <Form form={form} {...formProps} name={name || '__Form__' + _fid} onValuesChange={handleFormChange}>
+      <Form
+        form={form}
+        {...formProps}
+        name={name || '__Form__' + _fid}
+        onValuesChange={handleFormChange}
+        className="loopingClass"
+      >
         {children}
         <Row>
           {Object.keys(jsonItems).map(formItemName => {

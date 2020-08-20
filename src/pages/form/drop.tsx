@@ -18,6 +18,7 @@ const formConfig: ItemProps = {
   },
   input: {
     formItemProps: {
+      preserve: true,
       label: '输入框',
       rules: [{ required: true }],
     },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form } from 'antd';
 import { Store } from 'antd/es/form/interface';
 import AdForm from '../../components/AdForm';
@@ -56,6 +56,40 @@ const formConfig: ItemProps = {
       { label: '选项A', value: '1' },
       { label: '选项B', value: '2' },
     ],
+  },
+  DatePicker: {
+    formItemProps: {
+      label: '',
+    },
+    tag: 'DatePicker',
+    layout: {
+      span: 6,
+    },
+  },
+  input4: {
+    formItemProps: {
+      label: '',
+      labelCol: {
+        span: 0,
+      },
+    },
+    onChange: function () {
+      console.log('onChange');
+    },
+    tag: 'Input',
+    layout: {
+      span: 17,
+    },
+  },
+  icon: {
+    onlyRender: true,
+    formItemProps: {
+      label: '',
+    },
+    render: () => '图标',
+    layout: {
+      span: 1,
+    },
   },
 };
 const LinkageForm: React.FC = () => {

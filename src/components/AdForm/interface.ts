@@ -55,6 +55,8 @@ export type ILinkageFn = (form: FormInstance, itemObj: ItemProps, cb: any) => vo
 
 export type IDzgItemProps = (ItemWithTag | ItemWithRender) & {
   formItemProps: FormItemProps;
+  onlyRender?: boolean;
+  labelStyle?: any;
   layout?: any;
   isDrop?: boolean;
   isDropFn?: IDropFn;
@@ -62,6 +64,8 @@ export type IDzgItemProps = (ItemWithTag | ItemWithRender) & {
   hidden?: boolean;
   children?: string | React.ReactNode;
   update?: any;
+  classNames?: string;
+  labelWidth?: number;
   [key: string]: any;
 };
 

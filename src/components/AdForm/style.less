@@ -3,7 +3,7 @@
   align-items: center;
   justify-self: start;
 
-  >button {
+  > button {
     margin: 0 8px;
 
     &:first-child {
@@ -15,3 +15,31 @@
     }
   }
 }
+
+// .form-item-label--4em {
+//   .ant-v4-form-item {
+//     padding-left: 4em;
+//     &-label {
+//       width: 4em;
+//       margin-left: -4em;
+//     }
+//   }
+// }
+
+//容器设置里面 label 宽度
+.loopingClass (@index) when (@index <= 20) {
+  @index2: (@index - floor(@index)) * 10;
+  @index3: floor(@index);
+  .form-item-label--@{index3}\.@{index2}em {
+    .ant-v4-form-item {
+      padding-left: (@index + 2) * 1em;
+      &-label {
+        min-width: (@index + 2) * 1em;
+        margin-left: -(@index + 2) * 1em;
+      }
+    }
+  }
+  .loopingClass((@index * 10 + 1) / 10);
+}
+
+.loopingClass(0);

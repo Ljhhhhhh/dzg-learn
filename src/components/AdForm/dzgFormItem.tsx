@@ -35,8 +35,12 @@ const removeFunInObj = (obj: any) => {
 const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
   const [propsData, setPropsData] = useState<any>(props);
   const { formItem, form, formProps } = propsData;
-  const {
+  let {
     formItemProps,
+    onlyRender,
+    classNames,
+    labelWidth,
+    labelStyle,
     tag,
     render,
     isDrop,
@@ -55,7 +59,6 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
 
   const itemLayout = layout || { span: 24 };
 
-  // TODO:: 布局单位 100px 5em
   const updateWithProps = (newProps: any) => {
     const { options, treeData, ...restProps } = newProps;
     const propsNew = {
@@ -114,7 +117,7 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
   const key =
     formItemProps.name + Date.now().toString() + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
 
-  if (formItem.hidden && tag?.toLowerCase() === 'input') {
+  if (formItem.hidden) {
     formItemProps.noStyle = true;
   }
 
@@ -132,9 +135,25 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
     }
   }
 
+  const FormItemWrapper = onlyRender ? React.Fragment : FormItem;
+  if (onlyRender) {
+    formItemProps = {
+      style: formItemProps.style,
+    };
+  }
+
+  if (labelStyle) {
+    formItemProps.label = <span style={{ display: 'inline-block', ...labelStyle }}>{formItemProps.label}</span>;
+  }
+
+  let cname = classNames || '';
+  if (typeof labelWidth === 'number') {
+    cname = `${cname} form-item-label--${labelWidth.toFixed(1)}em`;
+  }
+
   return (
-    <Col {...itemLayout}>
-      <FormItem {...formItemProps} key={key}>
+    <Col {...itemLayout} className={cname}>
+      <FormItemWrapper {...formItemProps} key={key}>
         {render ? (
           <div>{render(form, restProps, disabled)}</div>
         ) : Comp ? (
@@ -142,7 +161,7 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
             {children}
           </Comp>
         ) : null}
-      </FormItem>
+      </FormItemWrapper>
     </Col>
   );
 };
