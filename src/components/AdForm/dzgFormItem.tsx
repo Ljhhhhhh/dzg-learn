@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState, useRef } from 'react';
 import { Form, Col } from 'antd';
 import { IDzgFormItemProps } from './interface';
 import getFormItemTag from './formUtil';
-import { FormContext } from './dzgForm';
+import { FormContext, randomKey } from './dzgForm';
 import _ from 'lodash';
 
 const FormItem = Form.Item;
@@ -38,7 +38,7 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
   let {
     formItemProps,
     onlyRender,
-    classNames,
+    className,
     labelWidth,
     labelStyle,
     tag,
@@ -114,8 +114,6 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
   const { disabled } = formProps;
   const CompTag = render ? 'form-item-render' : tag;
   const Comp = getFormItemTag(CompTag);
-  const key =
-    formItemProps.name + Date.now().toString() + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
 
   if (formItem.hidden) {
     formItemProps.noStyle = true;
@@ -135,25 +133,20 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
     }
   }
 
-  const FormItemWrapper = onlyRender ? React.Fragment : FormItem;
-  if (onlyRender) {
-    formItemProps = {
-      style: formItemProps.style,
-    };
-  }
-
   if (labelStyle) {
     formItemProps.label = <span style={{ display: 'inline-block', ...labelStyle }}>{formItemProps.label}</span>;
   }
 
-  let cname = classNames || '';
+  let cname = className || '';
   if (typeof labelWidth === 'number') {
     cname = `${cname} form-item-label--${labelWidth.toFixed(1)}em`;
   }
 
+  const key = randomKey();
+
   return (
     <Col {...itemLayout} className={cname}>
-      <FormItemWrapper {...formItemProps} key={key}>
+      <FormItem {...formItemProps} key={key}>
         {render ? (
           <div>{render(form, restProps, disabled)}</div>
         ) : Comp ? (
@@ -161,7 +154,7 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
             {children}
           </Comp>
         ) : null}
-      </FormItemWrapper>
+      </FormItem>
     </Col>
   );
 };

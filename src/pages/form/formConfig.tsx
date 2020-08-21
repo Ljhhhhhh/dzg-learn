@@ -1,5 +1,5 @@
 import React from 'react';
-import { ItemProps } from '../../components/AdForm/interface';
+import { IDzgItemProps } from '../../components/AdForm/interface';
 import todos from './todos';
 
 let treeData = [
@@ -27,46 +27,52 @@ let treeData = [
   },
 ];
 
-const formConfig: ItemProps = {
-  input: {
+const formConfig: IDzgItemProps[] = [
+  {
     formItemProps: {
+      name: 'input',
       label: '输入框',
       rules: [{ required: true }],
       initialValue: '卢洁辉',
     },
     tag: 'Input',
   },
-  textarea: {
+  {
     formItemProps: {
+      name: 'textarea',
       label: '文本域',
       rules: [{ required: true }],
       initialValue: '卢洁辉',
     },
     tag: 'TextArea',
   },
-  password: {
+  {
     formItemProps: {
+      name: 'password',
       label: '密码',
     },
     tag: 'Password',
   },
-  search: {
+  {
     formItemProps: {
+      name: 'search',
       label: '搜索框',
     },
     tag: 'Search',
     onSearch: (value: string) => console.log(value),
   },
-  inputNumber: {
+  {
     formItemProps: {
+      name: 'inputNumber',
       label: '数字输入框',
     },
     tag: 'InputNumber',
     min: 0,
     max: 5,
   },
-  select: {
+  {
     formItemProps: {
+      name: 'select',
       label: '选择框',
     },
     tag: 'Select',
@@ -88,15 +94,17 @@ const formConfig: ItemProps = {
       });
     },
   },
-  radio: {
+  {
     formItemProps: {
+      name: 'radio',
       label: 'Radio',
     },
     tag: 'Radio',
     children: '选项A',
   },
-  RadioGroup: {
+  {
     formItemProps: {
+      name: 'RadioGroup',
       label: 'RadioGroup',
     },
     tag: 'Radio.Group',
@@ -109,14 +117,16 @@ const formConfig: ItemProps = {
       console.log('radio2 checked', e.target.value);
     },
   },
-  switch: {
+  {
     formItemProps: {
+      name: 'switch',
       label: 'Switch',
     },
     tag: 'Switch',
   },
-  Cascader: {
+  {
     formItemProps: {
+      name: 'Cascader',
       label: 'Cascader',
     },
     tag: 'Cascader',
@@ -155,28 +165,32 @@ const formConfig: ItemProps = {
       },
     ],
   },
-  DatePicker: {
+  {
     formItemProps: {
+      name: 'DatePicker',
       label: 'DatePicker',
     },
     tag: 'DatePicker',
   },
-  DatePickerRange: {
+  {
     formItemProps: {
+      name: 'DatePickerRange',
       label: 'DatePicker',
     },
     tag: 'DatePicker.RangePicker',
     picker: 'year',
   },
-  Checkbox: {
+  {
     formItemProps: {
+      name: 'Checkbox',
       label: 'Checkbox',
     },
     tag: 'Checkbox',
     children: 'dzg',
   },
-  CheckboxGroup: {
+  {
     formItemProps: {
+      name: 'CheckboxGroup',
       label: 'CheckboxGroup',
     },
     tag: 'Checkbox.Group',
@@ -187,20 +201,23 @@ const formConfig: ItemProps = {
       { label: 'Orange', value: 'Orange' },
     ],
   },
-  TimePicker: {
+  {
     formItemProps: {
+      name: 'TimePicker',
       label: 'TimePicker',
     },
     tag: 'TimePicker',
   },
-  TimePickerRange: {
+  {
     formItemProps: {
+      name: 'TimePickerRange',
       label: 'TimePicker.RangePicker',
     },
     tag: 'TimePicker.RangePicker',
   },
-  tree: {
+  {
     formItemProps: {
+      name: 'tree',
       label: 'Tree',
     },
     tag: 'TreeSelect',
@@ -218,9 +235,9 @@ const formConfig: ItemProps = {
       });
     },
   },
-  hello: {
+  {
     formItemProps: {},
     render: () => <div>hello</div>,
   },
-};
+];
 export { formConfig };

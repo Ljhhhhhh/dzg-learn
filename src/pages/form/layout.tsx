@@ -1,12 +1,13 @@
 import React from 'react';
 import { Store } from 'antd/es/form/interface';
 import AdForm from '../../components/AdForm';
-import { ItemProps } from '../../components/AdForm/interface';
+import { IDzgItemProps } from '../../components/AdForm/interface';
 import './_style.less';
 
-const formConfig: ItemProps = {
-  input1: {
+const formConfig: IDzgItemProps[] = [
+  {
     formItemProps: {
+      name: 'input1',
       label: 'INPUT1',
     },
     onChange: function () {
@@ -16,8 +17,9 @@ const formConfig: ItemProps = {
     layout: { span: 12 },
     labelWidth: 3,
   },
-  input2: {
+  {
     formItemProps: {
+      name: 'input2',
       label: 'INPUT2',
       labelCol: { span: 12 },
       wrapperCol: {
@@ -28,8 +30,9 @@ const formConfig: ItemProps = {
     layout: { span: 12 },
     labelWidth: 8,
   },
-  select: {
+  {
     formItemProps: {
+      name: 'select',
       label: '选择框',
       style: {
         width: '300px',
@@ -46,17 +49,19 @@ const formConfig: ItemProps = {
       { label: '选项B', value: '2' },
     ],
   },
-  RadioGroup: {
+  {
     formItemProps: {
+      name: 'RadioGroup',
       label: 'Radio组',
     },
+    className: 'hello-x-y-z',
     tag: 'Radio.Group',
     options: [
       { label: '选项A', value: '1' },
       { label: '选项B', value: '2' },
     ],
   },
-};
+];
 const LinkageForm: React.FC = () => {
   const handleSubmit = (values: Store) => {
     console.log(values, 'form');
@@ -64,7 +69,7 @@ const LinkageForm: React.FC = () => {
 
   return (
     <div className="ad-form_demo">
-      <AdForm name="myForm" onSubmit={handleSubmit} jsonItems={formConfig} />
+      <AdForm name="myForm" onSubmit={handleSubmit} jsonItems={formConfig} className="mmmForm" />
       {/* <div style={{ marginTop: 20 }}></div>
       <AdForm name="myForm2" onSubmit={handleSubmit} layout="vertical" jsonItems={formConfig} />
       <div style={{ marginTop: 20 }}></div>

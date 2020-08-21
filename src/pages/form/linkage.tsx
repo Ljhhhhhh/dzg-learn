@@ -2,28 +2,55 @@ import React from 'react';
 import { Form } from 'antd';
 import { Store } from 'antd/es/form/interface';
 import AdForm from '../../components/AdForm';
-import { ItemProps } from '../../components/AdForm/interface';
+import { IDzgItemProps } from '../../components/AdForm/interface';
 import './_style.less';
 
-const formConfig: ItemProps = {
-  input1: {
+const formConfig: IDzgItemProps[] = [
+  {
     formItemProps: {
+      name: 'input1',
       label: '联动控制input',
     },
     onChange: function () {
       console.log('onChange');
     },
     tag: 'Input',
+    order: 3,
   },
-  input2: {
+  {
     formItemProps: {
+      name: 'input2',
       label: '联动控制checkbox',
     },
     tag: 'Input',
-    linkageFn: (form, itemObj, i) => {
+    order: 2,
+  },
+  {
+    formItemProps: {
+      name: 'select',
+      label: '选择框',
+    },
+    tag: 'Select',
+    order: 1,
+    options: [
+      { label: '选项A', value: '1' },
+      { label: '选项B', value: '2' },
+    ],
+  },
+  {
+    formItemProps: {
+      name: 'RadioGroup',
+      label: 'Radio组',
+    },
+    tag: 'Radio.Group',
+    options: [
+      { label: '选项A', value: '1' },
+      { label: '选项B', value: '2' },
+    ],
+    linkageFn: (update, form) => {
       const value = form.getFieldsValue();
       if (value.input1 === 'lujiehui') {
-        itemObj.RadioGroup.update({
+        update({
           options: [
             { label: '选项一', value: '1' },
             { label: '选项二', value: '2' },
@@ -37,28 +64,9 @@ const formConfig: ItemProps = {
       }
     },
   },
-  select: {
+  {
     formItemProps: {
-      label: '选择框',
-    },
-    tag: 'Select',
-    options: [
-      { label: '选项A', value: '1' },
-      { label: '选项B', value: '2' },
-    ],
-  },
-  RadioGroup: {
-    formItemProps: {
-      label: 'Radio组',
-    },
-    tag: 'Radio.Group',
-    options: [
-      { label: '选项A', value: '1' },
-      { label: '选项B', value: '2' },
-    ],
-  },
-  DatePicker: {
-    formItemProps: {
+      name: 'DatePicker',
       label: '',
     },
     tag: 'DatePicker',
@@ -66,8 +74,9 @@ const formConfig: ItemProps = {
       span: 6,
     },
   },
-  input4: {
+  {
     formItemProps: {
+      name: 'input4',
       label: '',
       labelCol: {
         span: 0,
@@ -81,8 +90,7 @@ const formConfig: ItemProps = {
       span: 17,
     },
   },
-  icon: {
-    onlyRender: true,
+  {
     formItemProps: {
       label: '',
     },
@@ -91,7 +99,7 @@ const formConfig: ItemProps = {
       span: 1,
     },
   },
-};
+];
 const LinkageForm: React.FC = () => {
   const handleSubmit = (values: Store) => {
     console.log(values, 'form');

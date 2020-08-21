@@ -3,10 +3,11 @@ import { Form, Button, Row } from 'antd';
 import { Store } from 'antd/es/form/interface';
 import { FormInstance } from 'antd/es/form';
 import { message } from '@dzg/common-utils';
+import _ from 'lodash';
 import RenderFormItem from './dzgFormItem';
 import useDebounceFn from '../../hooks/useDebounceFn';
 import DzgButton from './dzgButton';
-import { IDzgFormProps, IFormContext } from './interface';
+import { IDzgFormProps, IFormContext, IDzgItemProps } from './interface';
 import './style.less';
 
 // TODO 联动项的依赖关系
@@ -16,10 +17,12 @@ import './style.less';
 // TODO 移除字段后保留值
 
 export const FormContext = createContext<IFormContext>({
-  jsonItems: {},
+  jsonItems: [],
   dropStore: {},
   linkageStore: {},
 });
+
+export const randomKey = () => Date.now().toString() + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
 
 // 整体表单
 let _Fid = 0;
@@ -27,6 +30,7 @@ const LAZY_TIME = 500;
 
 const DzgForm: React.FC<IDzgFormProps> = props => {
   const _fid = ++_Fid;
+  const [formList, setFormList] = useState<IDzgItemProps[]>([]);
   const [form] = Form.useForm();
   const submitBtnRef = useRef();
 
@@ -45,21 +49,32 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
     onSubmit,
     children,
     needBtn,
+    className,
     ...formProps
   } = props;
 
   const _DelayMs = delayMs || LAZY_TIME;
 
   useEffect(() => {
-    checkFields();
-  }, [jsonItems]);
-
-  useEffect(() => {
+    sortFormItems();
     if (initialValue) {
       form.setFieldsValue(initialValue);
-      checkFields();
     }
-  }, []);
+  }, [jsonItems]);
+
+  // 表单项排序
+  const sortFormItems = () => {
+    let relFormList: Array<IDzgItemProps> = [];
+    relFormList = jsonItems.map((e, index) => {
+      if (!e.order && e.order !== 0) {
+        e.order = index;
+        return e;
+      }
+      return e;
+    });
+    relFormList = _.orderBy(relFormList, ['order'], ['asc']);
+    setFormList(relFormList);
+  };
 
   // 重置表单
   const handleReset = () => {
@@ -93,15 +108,20 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
         isDropFn,
         setDrop,
       };
+      if (isDropFn) {
+        // 初始化的时候运行一次
+        const flag = isDropFn(form);
+        setDrop(flag);
+      }
     },
     appendToLinkage: (item: any) => {
-      const { name, linkageFn, jsonItems, update, updateOptions } = item;
+      const { name, linkageFn, jsonItems, update } = item;
       linkageStore[name] = {
         jsonItems,
         linkageFn: linkageFn || null,
         update,
-        updateOptions,
       };
+      linkageFn && linkageFn(update, form); // 初始化的时候运行一次
     },
   };
 
@@ -117,8 +137,8 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
     if (linkageFns.length) {
       // 把当前项的值也传出去
       linkageFns.forEach((item: any) => {
-        const { linkageFn } = item;
-        linkageFn(form, linkageStore);
+        const { linkageFn, update } = item;
+        linkageFn(update, form);
       });
     }
   };
@@ -141,6 +161,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
         }, _DelayMs);
       }
     }
+    console.log(changedValues, 'changedValues');
     run();
   };
 
@@ -163,26 +184,26 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   };
   // createContext 存储子项实例
   return (
-    <FormContext.Provider value={dropContext}>
-      <Form
-        form={form}
-        {...formProps}
-        name={name || '__Form__' + _fid}
-        onValuesChange={handleFormChange}
-        className="loopingClass"
-      >
-        {children}
-        <Row>
-          {Object.keys(jsonItems).map(formItemName => {
-            jsonItems[formItemName].formItemProps.name = formItemName;
-            const key =
-              formItemName + Date.now().toString() + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
-            return <RenderFormItem key={key} form={form} formItem={jsonItems[formItemName]} formProps={formProps} />;
-          })}
-        </Row>
-        <div className="dzg-adform_btnwrap">{formBtnWrap(form)}</div>
-      </Form>
-    </FormContext.Provider>
+    <div className={className}>
+      <FormContext.Provider value={dropContext}>
+        <Form
+          form={form}
+          {...formProps}
+          name={name || '__Form__' + _fid}
+          onValuesChange={handleFormChange}
+          className="loopingClass"
+        >
+          {children}
+          <Row>
+            {formList.map((item: IDzgItemProps) => {
+              const key = randomKey();
+              return <RenderFormItem key={key} form={form} formItem={item} formProps={formProps} />;
+            })}
+          </Row>
+          <div className="dzg-adform_btnwrap">{formBtnWrap(form)}</div>
+        </Form>
+      </FormContext.Provider>
+    </div>
   );
 };
 

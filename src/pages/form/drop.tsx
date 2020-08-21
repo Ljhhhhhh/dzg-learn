@@ -3,36 +3,40 @@ import { Button } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { Store } from 'antd/es/form/interface';
 import AdForm from '../../components/AdForm';
-import { ItemProps } from '../../components/AdForm/interface';
+import { IDzgItemProps } from '../../components/AdForm/interface';
 import './_style.less';
 
-const formConfig: ItemProps = {
-  switch: {
+const formConfig: IDzgItemProps[] = [
+  {
     formItemProps: {
       label: '是否展示输入框',
+      name: 'switch',
+      initialValue: true,
     },
     tag: 'Switch',
     layout: {
-      span: 6,
+      span: 4,
     },
   },
-  input: {
+  {
     formItemProps: {
+      name: 'input',
       preserve: true,
       label: '输入框',
       rules: [{ required: true }],
     },
     tag: 'Input',
     layout: {
-      span: 6,
+      span: 4,
     },
     isDropFn: (form: FormInstance) => {
+      console.log(form.getFieldValue('switch'));
       return !form.getFieldValue('switch');
     },
   },
-};
+];
 const DropForm: React.FC = () => {
-  const [itemObj, setItemObj] = useState<ItemProps>(formConfig);
+  const [itemObj, setItemObj] = useState<IDzgItemProps[]>(formConfig);
 
   // form表单change事件
   const handleFormChange = (changedValue: Store, allValues: Store) => {
@@ -44,13 +48,21 @@ const DropForm: React.FC = () => {
   };
 
   const addField = () => {
-    (itemObj['hello'] = {
-      formItemProps: {
-        label: '新增输入框',
+    const tempItem = [
+      ...itemObj,
+      {
+        formItemProps: {
+          label: '新增输入框',
+          name: 'new-input',
+        },
+        tag: 'Input',
+        layout: {
+          span: 4,
+        },
+        order: 0,
       },
-      tag: 'Input',
-    }),
-      setItemObj({ ...itemObj });
+    ];
+    setItemObj(tempItem);
   };
 
   const renderMoreBtn = (form: FormInstance) => {
