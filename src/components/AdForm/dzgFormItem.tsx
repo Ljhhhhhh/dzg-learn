@@ -37,18 +37,17 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
   const { formItem, form, formProps } = propsData;
   let {
     formItemProps,
-    onlyRender,
     className,
     labelWidth,
     labelStyle,
     tag,
+    dependencies,
     render,
     isDrop,
     isDropFn,
     linkageFn,
     children,
     update,
-    jsonItems,
     onSearch,
     layout,
     ...restProps
@@ -95,15 +94,9 @@ const RenderFormItem: React.FC<IDzgFormItemProps> = props => {
     }
     if (context.appendToLinkage) {
       context.appendToLinkage({
-        jsonItems: {
-          ...context.linkageStore,
-          [name]: {
-            ...context.jsonItems[name],
-            update: updateWithProps,
-          },
-        },
         name,
-        linkageFn: linkageFn ? linkageFn : null,
+        linkageFn,
+        dependencies,
         update: updateWithProps,
       });
     }

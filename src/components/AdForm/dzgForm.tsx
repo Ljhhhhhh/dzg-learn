@@ -10,14 +10,7 @@ import DzgButton from './dzgButton';
 import { IDzgFormProps, IFormContext, IDzgItemProps } from './interface';
 import './style.less';
 
-// TODO 联动项的依赖关系
-// TODO 表单项label的绝对宽度、样式
-// TODO 只渲染，form值不需要的情况
-// TODO 表单排序
-// TODO 移除字段后保留值
-
 export const FormContext = createContext<IFormContext>({
-  jsonItems: [],
   dropStore: {},
   linkageStore: {},
 });
@@ -66,7 +59,7 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   const sortFormItems = () => {
     let relFormList: Array<IDzgItemProps> = [];
     relFormList = jsonItems.map((e, index) => {
-      if (!e.order && e.order !== 0) {
+      if (!e.order && typeof e.order !== 'number') {
         e.order = index;
         return e;
       }
@@ -99,7 +92,6 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
   const dropStore: any = {};
   const linkageStore: any = {};
   const dropContext: IFormContext = {
-    jsonItems,
     dropStore,
     linkageStore,
     appendToDrop: (item: any) => {
@@ -115,12 +107,17 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
       }
     },
     appendToLinkage: (item: any) => {
-      const { name, linkageFn, jsonItems, update } = item;
-      linkageStore[name] = {
-        jsonItems,
-        linkageFn: linkageFn || null,
+      const { name, linkageFn, dependencies, update } = item;
+      const newObj: any = {
         update,
       };
+      if (linkageFn) {
+        newObj.linkageFn = linkageFn;
+        if (dependencies && dependencies.length) {
+          newObj.dependencies = dependencies;
+        }
+      }
+      linkageStore[name] = newObj;
       linkageFn && linkageFn(update, form); // 初始化的时候运行一次
     },
   };
@@ -137,8 +134,12 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
     if (linkageFns.length) {
       // 把当前项的值也传出去
       linkageFns.forEach((item: any) => {
-        const { linkageFn, update } = item;
-        linkageFn(update, form);
+        const { dependencies, linkageFn, update } = item;
+        if (dependencies.includes(changedField)) {
+          linkageFn(update, form);
+        } else if (!dependencies) {
+          linkageFn(update, form);
+        }
       });
     }
   };
@@ -149,19 +150,18 @@ const DzgForm: React.FC<IDzgFormProps> = props => {
 
   // 表单修改
   let flag: any;
+  let changedField: string;
   const handleFormChange = (changedValues: Store, allValues: Store) => {
     onFormChange && onFormChange(changedValues, allValues);
-    if (onFormChangeLazy) {
-      if (!flag) {
-        onFormChangeLazy(changedValues, allValues);
-        flag = true;
-        let timer = setTimeout(() => {
-          flag = false;
-          clearTimeout(timer);
-        }, _DelayMs);
-      }
+    if (onFormChangeLazy && !flag) {
+      onFormChangeLazy(changedValues, allValues);
+      flag = true;
+      let timer = setTimeout(() => {
+        flag = false;
+        clearTimeout(timer);
+      }, _DelayMs);
     }
-    console.log(changedValues, 'changedValues');
+    changedField = Object.keys(changedValues)[0];
     run();
   };
 

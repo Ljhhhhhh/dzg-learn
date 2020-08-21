@@ -47,6 +47,7 @@ const formConfig: IDzgItemProps[] = [
       { label: '选项A', value: '1' },
       { label: '选项B', value: '2' },
     ],
+    dependencies: ['input1'],
     linkageFn: (update, form) => {
       const value = form.getFieldsValue();
       if (value.input1 === 'lujiehui') {

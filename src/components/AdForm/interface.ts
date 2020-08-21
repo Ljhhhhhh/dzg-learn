@@ -62,6 +62,7 @@ export type IDzgItemProps = (ItemWithTag | ItemWithRender) & {
   update?: any; // 更新FormItem方法
   className?: string; // formItem表单项样式 不包含label
   labelWidth?: number; // label宽度 单位是em
+  dependencies?: string[];
   [key: string]: any;
 };
 
@@ -90,7 +91,7 @@ export interface IDzgFormProps extends Omit<FormProps, 'onFormFinish'> {
 }
 
 export interface IFormContext {
-  jsonItems: IDzgItemProps[];
+  // jsonItems: IDzgItemProps[];
   dropStore: any;
   linkageStore: any;
   appendToDrop?: (tem: any) => void;

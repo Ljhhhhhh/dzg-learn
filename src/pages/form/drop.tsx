@@ -30,7 +30,6 @@ const formConfig: IDzgItemProps[] = [
       span: 4,
     },
     isDropFn: (form: FormInstance) => {
-      console.log(form.getFieldValue('switch'));
       return !form.getFieldValue('switch');
     },
   },

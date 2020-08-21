@@ -28,7 +28,7 @@
 
 //容器设置里面 label 宽度
 .loopingClass (@index) when (@index <= 20) {
-  @index2: (@index - floor(@index)) * 10;
+  @index2: (@index * 10 - floor(@index) * 10) / 10;
   @index3: floor(@index);
   .form-item-label--@{index3}\.@{index2}em {
     .ant-v4-form-item {
